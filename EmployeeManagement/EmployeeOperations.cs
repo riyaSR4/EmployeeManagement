@@ -17,7 +17,7 @@ namespace EmployeeManagement
             string connectionStr = "data source = (localdb)\\MSSQLLocalDB; initial catalog = EmployeeManagement; integrated security = true";
             con = new SqlConnection(connectionStr);
         }
-        public bool AddEmployee(Employee obj)
+        public Employee AddEmployee(Employee obj)
         {
             try
             {
@@ -28,15 +28,18 @@ namespace EmployeeManagement
                 com.Parameters.AddWithValue("@City", obj.City);
                 com.Parameters.AddWithValue("@Address", obj.Address);
                 con.Open();
-                int i = com.ExecuteNonQuery(); //Executes and returns the num of records added or updated
-                con.Close();
-                if (i != 0)
+                com.ExecuteNonQuery();
+                var i = com.ExecuteScalar();
+                if (i != null)
                 {
-                    return true;
+                    Console.WriteLine("Employee added");
+                    obj.EmpId = Convert.ToInt32(i);
+                    Console.WriteLine(obj.EmpId);
+                    return obj;
                 }
                 else
                 {
-                    return false;
+                    return null;
                 }
             }
             catch (Exception ex)
